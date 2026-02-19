@@ -56,7 +56,7 @@ if submitted:
                     "https://api.runpod.ai/v2/rlydf3a15qv86b/run",
                     headers={
                         "Content-Type": "application/json",
-                        "Authorization": "Bearer rpa_F2URUMLY40LQC6S0SG3GGV4JGNHFBP1tqIz1"
+                        "Authorization": "Bearer rpa_YUF652M25EB1I1IQAWDT988YIXQYLZKNN945AT9Eudu63j"
                     },
                     json={
                         "input": {
