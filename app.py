@@ -200,79 +200,112 @@ if st.session_state.image_url:
     story_data = st.session_state.story_data
     image_url = st.session_state.image_url
     
-    st.success("✅ تم إنشاء القصة!")
+    # 🔔 نافذة منبثقة عند الانتهاء
+    st.balloons()  # تأثير احتفالي
+    
+    st.success("✅ تم إنشاء القصة بنجاح!")
+    
+    # رسالة بارزة
+    st.markdown("""
+        <div style="
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        ">
+            <h2 style="color: #155724; margin: 0;">🎉 تهانينا!</h2>
+            <p style="color: #155724; font-size: 18px; margin: 10px 0;">
+                تم إنشاء قصة <strong>{}</strong> بنجاح
+            </p>
+            <p style="color: #28a745; font-size: 24px; margin: 0;">
+                👇 انقر لتحميل PDF
+            </p>
+        </div>
+    """.format(child_name), unsafe_allow_html=True)
+    
+    # عرض الصورة
     st.image(image_url, caption=f"صورة {child_name}", use_column_width=True)
     
-    if st.button("📄 إنشاء PDF"):
-        with st.spinner("جاري إنشاء PDF..."):
-            try:
-                pdf_buffer = io.BytesIO()
-                c = canvas.Canvas(pdf_buffer, pagesize=A4)
-                width, height = A4
-                
-                # صفحة الغلاف
-                c.setFont("Helvetica-Bold", 30)
-                c.drawCentredString(width/2, height-100, story_data["title"])
-                c.setFont("Helvetica", 20)
-                c.drawCentredString(width/2, height-150, f"قصة {child_name}")
-                
-                # تحميل وإدراج الصورة
+    # زر إنشاء PDF بارز
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("📥 تحميل القصة الكاملة (PDF)", type="primary", use_container_width=True):
+            with st.spinner("جاري إنشاء PDF..."):
                 try:
-                    img_response = requests.get(image_url)
-                    img = Image.open(io.BytesIO(img_response.content))
-                    img_buffer = io.BytesIO()
-                    img.save(img_buffer, format='PNG')
-                    img_buffer.seek(0)
-                    c.drawImage(ImageReader(img_buffer), 100, 300, width=400, height=400, preserveAspectRatio=True)
-                except Exception as e:
-                    st.warning(f"تعذر إدراج الصورة: {e}")
-                
-                c.showPage()
-                
-                # صفحات القصة
-                for i, page_text in enumerate(story_data["pages"]):
-                    c.setFont("Helvetica-Bold", 20)
-                    c.drawCentredString(width/2, height-80, f"صفحة {i+1}")
+                    pdf_buffer = io.BytesIO()
+                    c = canvas.Canvas(pdf_buffer, pagesize=A4)
+                    width, height = A4
                     
-                    c.setFont("Helvetica", 14)
-                    text = page_text.format(name=child_name)
+                    # صفحة الغلاف
+                    c.setFont("Helvetica-Bold", 30)
+                    c.drawCentredString(width/2, height-100, story_data["title"])
+                    c.setFont("Helvetica", 20)
+                    c.drawCentredString(width/2, height-150, f"قصة {child_name}")
                     
-                    # تقسيم النص
-                    words = text.split()
-                    lines = []
-                    current_line = []
-                    for word in words:
-                        current_line.append(word)
-                        if len(' '.join(current_line)) > 50:
-                            lines.append(' '.join(current_line[:-1]))
-                            current_line = [current_line[-1]]
-                    if current_line:
-                        lines.append(' '.join(current_line))
-                    
-                    y = height - 200
-                    for line in lines:
-                        c.drawCentredString(width/2, y, line)
-                        y -= 30
+                    # تحميل وإدراج الصورة
+                    try:
+                        img_response = requests.get(image_url)
+                        img = Image.open(io.BytesIO(img_response.content))
+                        img_buffer = io.BytesIO()
+                        img.save(img_buffer, format='PNG')
+                        img_buffer.seek(0)
+                        c.drawImage(ImageReader(img_buffer), 100, 300, width=400, height=400, preserveAspectRatio=True)
+                    except Exception as e:
+                        st.warning(f"تعذر إدراج الصورة: {e}")
                     
                     c.showPage()
-                
-                c.save()
-                pdf_buffer.seek(0)
-                
-                st.success("✅ تم إنشاء PDF!")
-                st.download_button(
-                    label="📥 تحميل القصة الكاملة (PDF)",
-                    data=pdf_buffer,
-                    file_name=f"قصة_{child_name}.pdf",
-                    mime="application/pdf"
-                )
-                
-            except Exception as e:
-                st.error(f"❌ خطأ في إنشاء PDF: {str(e)}")
+                    
+                    # صفحات القصة
+                    for i, page_text in enumerate(story_data["pages"]):
+                        c.setFont("Helvetica-Bold", 20)
+                        c.drawCentredString(width/2, height-80, f"صفحة {i+1}")
+                        
+                        c.setFont("Helvetica", 14)
+                        text = page_text.format(name=child_name)
+                        
+                        # تقسيم النص
+                        words = text.split()
+                        lines = []
+                        current_line = []
+                        for word in words:
+                            current_line.append(word)
+                            if len(' '.join(current_line)) > 50:
+                                lines.append(' '.join(current_line[:-1]))
+                                current_line = [current_line[-1]]
+                        if current_line:
+                            lines.append(' '.join(current_line))
+                        
+                        y = height - 200
+                        for line in lines:
+                            c.drawCentredString(width/2, y, line)
+                            y -= 30
+                        
+                        c.showPage()
+                    
+                    c.save()
+                    pdf_buffer.seek(0)
+                    
+                    st.success("✅ تم إنشاء PDF!")
+                    
+                    # زر التحميل بارز
+                    st.download_button(
+                        label="📥 اضغط هنا لتحميل PDF",
+                        data=pdf_buffer,
+                        file_name=f"قصة_{child_name}.pdf",
+                        mime="application/pdf",
+                        use_container_width=True
+                    )
+                    
+                except Exception as e:
+                    st.error(f"❌ خطأ في إنشاء PDF: {str(e)}")
     
     # زر إعادة البدء
-    if st.button("🔄 إنشاء قصة جديدة"):
-        st.session_state.job_id = None
-        st.session_state.image_url = None
-        st.session_state.checking = False
+    st.markdown("---")
+    if st.button("🔄 إنشاء قصة جديدة", use_container_width=True):
+        # مسح جميع البيانات
+        for key in ['job_id', 'image_url', 'checking', 'start_time', 'child_name', 'story_data']:
+            if key in st.session_state:
+                del st.session_state[key]
         st.rerun()
