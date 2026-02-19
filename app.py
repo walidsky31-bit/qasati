@@ -53,7 +53,7 @@ if submitted:
                 
                 # إرسال لـ RunPod - الرابط الصحيح
                 response = requests.post(
-                    "https://api.runpod.ai/v2/rlydf3a15qv86b/run",
+                    "https://api.runpod.ai/v2/r1ydf3al5qv86b/run",
                     headers={
                         "Content-Type": "application/json",
                         "Authorization": "Bearer rpa_YUF652M25EB1I1IQAWDT988YIXQYLZKNN945AT9Eudu63j"
