@@ -97,10 +97,10 @@ if submitted:
                 
                 # إرسال لـ RunPod
                 response = requests.post(
-                    "https://api.runpod.ai/v2/rlydf3a15qv86b/run",
+                    "https://api.runpod.ai/v2/r1ydf3al5qv86b/run",
                     headers={
                         "Content-Type": "application/json",
-                        "Authorization": "Bearer rpa_F2URUMLY40LQC6S0SG3GGV4JGNHFBP1tqIz1"
+                        "Authorization": "Bearer rpa_YUF652M25EB1I1IQAWDT988YIXQYLZKNN945AT9Eudu63j"
                     },
                     json={
                         "input": {
@@ -127,8 +127,8 @@ if submitted:
                             time.sleep(5)
                             
                             status_response = requests.get(
-                                f"https://api.runpod.ai/v2/rlydf3a15qv86b/status/{job_id}",
-                                headers={"Authorization": "Bearer rpa_F2URUMLY40LQC6S0SG3GGV4JGNHFBP1tqIz1"}
+                                f"https://api.runpod.ai/v2/r1ydf3al5qv86b/status/{job_id}",
+                                headers={"Authorization": "Bearer rpa_YUF652M25EB1I1IQAWDT988YIXQYLZKNN945AT9Eudu63j"}
                             )
                             
                             if status_response.status_code == 200:
